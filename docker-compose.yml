@@ -16,7 +16,7 @@ services:
         - "traefik.enable=true"
         ## HTTP Routers
         - "traefik.http.routers.api-rtr.entrypoints=https"
-        - "traefik.http.routers.api-rtr.rule=Host(`api.$DOMAINNAME`)"
+        - "traefik.http.routers.api-rtr.rule=Host(`api.matirivas.me`)"
         - "traefik.http.routers.api-rtr.tls=true"
         ## Middlewares
         - "traefik.http.routers.api-rtr.middlewares=chain-no-auth@file" # No Authentication
