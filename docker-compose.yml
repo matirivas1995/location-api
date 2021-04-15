@@ -1,0 +1,34 @@
+version: "3.4"
+services:
+    kibana:
+        build: .
+        container_name: nodejs
+        networks:
+        - t2_proxy
+        restart: unless-stopped
+        ports:
+        - 3000:3000
+        command: npm run dev
+        volumes:
+        - .:/usr/app/
+        - /usr/app/node_modules
+        labels:
+        - "traefik.enable=true"
+        ## HTTP Routers
+        - "traefik.http.routers.api-rtr.entrypoints=https"
+        - "traefik.http.routers.api-rtr.rule=Host(`api.$DOMAINNAME`)"
+        - "traefik.http.routers.api-rtr.tls=true"
+        ## Middlewares
+        - "traefik.http.routers.api-rtr.middlewares=chain-no-auth@file" # No Authentication
+    #     - "traefik.http.routers.radarr-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+        #- "traefik.http.routers.portainer-rtr.middlewares=chain-oauth@file" # Google OAuth 2.0
+        ## HTTP Services
+        - "traefik.http.routers.api-rtr.service=api-svc"
+        - "traefik.http.services.api-svc.loadbalancer.server.port=3000"
+########################### NETWORKS
+networks:
+    t2_proxy:
+      external:
+        name: t2_proxy
+    default:
+      driver: bridge
