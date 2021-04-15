@@ -14,6 +14,8 @@ let usuario = {
 
 let usuarios = []
 
+let hospitales = []
+
 let respuesta = {
  error: false,
  codigo: 200,
@@ -30,8 +32,15 @@ MongoClient.connect('mongodb://matirivas.me:27017', function(err, db) {
     if (err) {
       throw err;
     }
-    console.log(result);
     usuarios = result;
+
+  });
+
+  dbo.collection("hospitales").find().toArray(function(err, result) {
+    if (err) {
+      throw err;
+    }
+    hospitales = result;
 
   });
 });
@@ -56,6 +65,16 @@ app.get('/usuario', function (req, res) {
   }
   res.send(respuesta);
 });
+
+app.get('/hospitales', function (req, res) {
+    respuesta = {
+     error: false,
+     codigo: 200,
+     mensaje: 'Operacion Exitosa',
+     respuesta: hospitales
+    }
+    res.send(respuesta);
+  });
 
 app.post('/usuario', function (req, res) {
  if(!req.body.nombre || !req.body.apellido) {
