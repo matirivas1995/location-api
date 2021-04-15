@@ -1,9 +1,15 @@
 const express = require("express");
 const bodyParser = require('body-parser');
+const cors = require('cors')
 const app = express();
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+const corsOptions = {
+  origin: '*',
+}
+
+
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 let MongoClient = require('mongodb').MongoClient;
 
 
@@ -23,7 +29,7 @@ let respuesta = {
 };
 
 
-MongoClient.connect('mongodb://matirivas.me:27017', function(err, db) {
+MongoClient.connect('mongodb://matirivas.me:27017',{useNewUrlParser: true, useUnifiedTopology: true}, function(err, db) {
   if (err) {
     throw err;
   }
@@ -40,6 +46,7 @@ MongoClient.connect('mongodb://matirivas.me:27017', function(err, db) {
     if (err) {
       throw err;
     }
+    console.log(result);
     hospitales = result;
 
   });
@@ -47,7 +54,7 @@ MongoClient.connect('mongodb://matirivas.me:27017', function(err, db) {
 
 
 
-app.get('/', function(req, res) {
+app.get('/', function(req, res,next) {
  respuesta = {
   error: true,
   codigo: 200,
@@ -57,6 +64,7 @@ app.get('/', function(req, res) {
 });
 
 app.get('/usuario', function (req, res) {
+  res.setHeader(Headers())
   respuesta = {
    error: false,
    codigo: 200,
@@ -66,12 +74,13 @@ app.get('/usuario', function (req, res) {
   res.send(respuesta);
 });
 
-app.get('/hospitales', function (req, res) {
+app.get('/hospitales', cors(corsOptions), function (req, res, next) {
+    console.log(hospitales)
     respuesta = {
      error: false,
      codigo: 200,
      mensaje: 'Operacion Exitosa',
-     respuesta: hospitales
+     centros: hospitales
     }
     res.send(respuesta);
   });
